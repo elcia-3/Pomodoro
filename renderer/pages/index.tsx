@@ -6,6 +6,7 @@ export default function test() {
  return (
     <>
       <Clock></Clock>
+      <p>test</p>
    </>
   )
 }
