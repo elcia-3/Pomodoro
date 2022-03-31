@@ -10,7 +10,7 @@ export default function Home() {
   // ボタンイベント
   const dialogAction = async (event) => {
     console.log("dialogAction");
-    await (window as any).electron.dialogMsg("テストだよ");
+    await window.electron.dialogMsg("テストだよ");
   };
 
   return (
