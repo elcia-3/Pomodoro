@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import React from 'react';
+
 
 
 export default function Home() {
@@ -7,11 +9,21 @@ export default function Home() {
     console.log("useEffect");
   }, []);
 
+
+
   // ボタンイベント
-  const dialogAction = async (event) => {
+  const dialogAction = async () => {
     console.log("dialogAction");
     await window.electron.dialogMsg("テストだよ");
+    audio()
   };
+
+  function audio(){
+    let audio_player = new Audio()
+    audio_player.src = "/music/bell.mp3" // サウンドファイルのパス
+    audio_player.volume = 0.5
+    audio_player.play()
+  }
 
   return (
     <div className="main">
@@ -22,6 +34,7 @@ export default function Home() {
       <button id="test_button" type="button" onClick={dialogAction}>
         TEST
       </button>
+
 
       <style jsx>{`
         h1 {

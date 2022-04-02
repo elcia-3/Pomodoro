@@ -3,7 +3,7 @@ import { join } from 'path'
 import { format } from 'url'
 
 // Packages
-import { BrowserWindow, app, ipcMain, dialog } from 'electron'
+import { BrowserWindow, app, ipcMain, Notification } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
 
@@ -43,11 +43,9 @@ app.on('window-all-closed', app.quit)
 
 
 // listen the channel `message` and resend the received message to the renderer process
-ipcMain.handle("dialogMsg", (_event,data) => {
-  dialog.showMessageBox({
-    type: "info",
-    title: "タイトル",
-    message: data,
-  });
-  return;
+ipcMain.handle("dialogMsg", (_event,_data) => {
+  const NOTIFICATION_TITLE = 'Pomodoro'
+  const NOTIFICATION_BODY = _data
+  new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY, silent:  true }).show()
+
 })
