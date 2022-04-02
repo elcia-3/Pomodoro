@@ -10,6 +10,7 @@ export default function test() {
      <Link href="/Notification">
       <a>通知テスト</a>
      </Link>
+
    </>
   )
 }

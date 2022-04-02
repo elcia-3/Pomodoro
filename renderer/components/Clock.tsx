@@ -2,6 +2,7 @@ import css from '../public/styles/clock.module.css'
 import React,{ useState, useEffect } from 'react';
 
 export default function clock() {
+    //time variable
     let [count, setCount] = useState(0);
     let minute: string = `0${Math.floor(count / 60)}`.slice(-2);
     let second: string = `0${count % 60}`.slice(-2);
@@ -11,6 +12,7 @@ export default function clock() {
     //status = 0 initialStatus; status = 1 workTime; status = 2 breakTime
     let [status, setStatus] = useState(0);
         
+    //notification
     const startNotification = async () => {
         console.log("start");
         await window.electron.dialogMsg("Work Time");
@@ -21,7 +23,7 @@ export default function clock() {
         await window.electron.dialogMsg("Break Time");
     };
 
-
+    //audio
     function startmp3(){
         let startAudio = new Audio()
         startAudio.src = "/music/bell.mp3" 
@@ -36,10 +38,12 @@ export default function clock() {
         finishAudio.play()
     }
 
+
     function setTime(time){
         setCount(time);
     }
 
+    //time countdown
     function countdown(){
         setCount(count - 1);
     }
@@ -51,7 +55,6 @@ export default function clock() {
                 return () => clearInterval(timerId);
             }
             if (count <= 0) {
-
                 if (status === 1) {
                     setTime(breakTime)
                     setStatus(2);
