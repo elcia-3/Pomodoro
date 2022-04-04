@@ -879,10 +879,9 @@
     "update-notifier" "^5.1.0"
     "yargs" "^17.0.1"
 
-"electron-db@^0.15.7":
-  "integrity" "sha512-9EwGaSFjuyHBI2d6jTeSrzspLR/HJaWlvG3YgYSj+Ai2HvG7RNB49k6x9rJ/Hi72RWVL8hkSfjQSVZeZu/Rjxw=="
-  "resolved" "https://registry.npmjs.org/electron-db/-/electron-db-0.15.7.tgz"
-  "version" "0.15.7"
+"electron-db@elcia-3/electron-db":
+  "resolved" "git+ssh://git@github.com/elcia-3/electron-db.git#75093877ef2ef89289ca67d0bd2e53152056c2dd"
+  "version" "0.15.5"
 
 "electron-is-dev@^1.1.0", "electron-is-dev@>=0.3.0":
   "integrity" "sha512-R1oD5gMBPS7PVU8gJwH6CtT0e6VSoD0+SzSnYpNm+dBkcijgA+K7VAMHDfnRq/lkKPZArpzplTW6jfiMYosdzw=="

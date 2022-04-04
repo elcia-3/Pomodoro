@@ -20,7 +20,7 @@ export default function Home() {
 
   function audio(){
     let audio_player = new Audio()
-    audio_player.src = "/music/bell.mp3" // サウンドファイルのパス
+    audio_player.src = "/music/bell.mp3" 
     audio_player.volume = 0.5
     audio_player.play()
   }

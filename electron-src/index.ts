@@ -51,19 +51,28 @@ ipcMain.handle("dialogMsg", (_event,_data) => {
 
 
 ipcMain.handle("testdb", (_event,_data) => {
-    testDbFunction();
+  testDbFunction();
 })
+
+ipcMain.handle("dbupdate", (_event,_data) => {
+  dbupdate();
+})
+
+ipcMain.handle("getAllData", (_event,_data) => {
+  getAllData();
+})
+
 
 const db = require('electron-db');
 const path = require('path');
+const savePath:any = path.join("./database/","");
 
-interface TEST_DATA{
-    name: string,
+interface POMODORODATA{
     date: string,
+    count:number,
 }
 
 export const testDbFunction = () => {
-    const savePath:any = path.join("./database/","");
     if(!db.tableExists('Test',savePath)) {
         db.createTable('Test',savePath,(success:boolean,msg:string) => {
             if(success) {
@@ -75,24 +84,62 @@ export const testDbFunction = () => {
     } else {
         console.log("already create Test table");
     }
-    //テストデータの挿入
-    const current_date = new Date();
-    const str_now_time = ('0' + current_date.getHours()).slice(-2) + ":" + ('0' + current_date.getMinutes()).slice(-2);
-    let test_data : TEST_DATA= {name:"MSK",date:str_now_time};
-    db.insertTableContent('Test',savePath,test_data,(success:boolean,message:string) => {
-        if(success) {
-            console.log("insertTableContent success : "+message);
-        } else {
-            console.log("insertTableContent failed : "+message);
-        }
-    });
-    //テスト読み込み
-    db.getAll('Test',savePath,(success:boolean,data:any)=> {
-        if(success) {
-            console.log("getAll success");
-            console.log(data);
-        } else {
-            console.log("getAll failed");
-        }
-    });
 };
+
+export const getAllData = () : POMODORODATA[] | boolean => {
+    let result : POMODORODATA[] | boolean = false;
+  if(db.tableExists('Test',savePath)) {
+        //テーブルが存在するならgetAll
+        db.getAll( 'Test', savePath ,(success:boolean,contents:POMODORODATA[]) => {
+            if(success) {
+                console.log("getAll success");
+                console.log(contents);
+                result = contents;
+            } else {
+                console.log("getAll failed");
+                result = false;
+            }
+        });
+    } else {
+        console.log("table is not exist");
+        result = false;
+    }
+    return result;
+}
+
+export const dbupdate = () => {
+  const currentDate = new Date();
+  const today: string = ( String(currentDate.getFullYear()) + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) +  ("0" + String(currentDate.getDate()).slice(-2)));
+
+  if(db.tableExists('Test',savePath)) {
+    db.getRows('Test',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {
+      if(success) {
+        console.log("getRows success");
+        console.log(contents);
+        if(contents.length > 0) {
+          let newCount: number = contents[0].count;
+          newCount++;
+          db.updateRow('Test', savePath, {"date":today}, {"count": newCount },  (successupdaterow:boolean,message:string) => {
+            if(successupdaterow) {
+              console.log("updateTestData.updateRow success."+message);
+            } else {
+                console.log("updateTestData.updateRow failed."+message);
+            }
+          });
+        } else {
+        let todaysFirstPomodoro : POMODORODATA= {count:1,date:today};
+        db.insertTableContent('Test',savePath,todaysFirstPomodoro,(success:boolean,message:string) => {
+          if(success) {
+              console.log("insertTableContent success : "+message);
+          } else {
+              console.log("insertTableContent failed : "+message);
+          }
+        });
+        }
+      } else {
+        console.log("getRows failed");
+      }
+    });
+  }
+
+}
