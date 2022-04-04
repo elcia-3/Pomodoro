@@ -10,6 +10,11 @@ export default function test() {
      <Link href="/Notification">
       <a>通知テスト</a>
      </Link>
+     <Link href="/db">
+      <a>dbTest</a>
+     </Link>
+
+
 
    </>
   )
