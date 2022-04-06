@@ -13,11 +13,15 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@uiw/react-heat-map": "^2.0.3",
+    "@uiw/react-tooltip": "^4.18.1",
     "electron-db": "elcia-3/electron-db",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
+    "next-remove-imports": "^1.0.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-heat-calendar": "^1.1.3",
     "use-sound": "^4.0.1"
   },
   "devDependencies": {

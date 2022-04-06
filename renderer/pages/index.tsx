@@ -7,12 +7,23 @@ export default function test() {
     <>
       <Clock></Clock>
 
+     <div>
      <Link href="/Notification">
       <a>通知テスト</a>
      </Link>
+     </div>
+     <div>
      <Link href="/db">
       <a>dbTest</a>
      </Link>
+     </div>
+     <div>
+     <Link href="/heatmap">
+      <a>heatmaptest</a>
+     </Link>
+     </div>
+
+
 
 
 

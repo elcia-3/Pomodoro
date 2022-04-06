@@ -1,4 +1,4 @@
-import css from '../public/styles/clock.module.css'
+import css from '../styles/clock.module.css'
 import React,{ useState, useEffect } from 'react';
 
 export default function clock() {
@@ -11,7 +11,9 @@ export default function clock() {
     
     //status = 0 initialStatus; status = 1 workTime; status = 2 breakTime
     let [status, setStatus] = useState(0);
-        
+
+
+
     //notification
     const startNotification = async () => {
         console.log("start");
@@ -22,6 +24,8 @@ export default function clock() {
         console.log("start");
         await window.electron.dialogMsg("Break Time");
     };
+
+
 
     //audio
     function startmp3(){
@@ -39,14 +43,36 @@ export default function clock() {
     }
 
 
+
+    //DataBase
+    const dialogAction = async () => {
+        console.log("dialogAction");
+        await window.electron.testdb();
+    };
+
+    const dbupdate = async () => {
+        console.log("dbupdate");
+        await window.electron.dbupdate();
+    };
+
+    const getAllData = async () => {
+        console.log("getAllData");
+        await window.electron.getAllData();
+    };
+ 
+
+
+    //Timer
     function setTime(time){
         setCount(time);
     }
 
-    //time countdown
     function countdown(){
         setCount(count - 1);
     }
+
+
+
 
     useEffect(() => {
         if(status !== 0){
@@ -60,6 +86,7 @@ export default function clock() {
                     setStatus(2);
                     finishNotification();
                     finishmp3();
+                    dbupdate();
                 } else if (status === 2) {
                     setTime(workTime)
                     setStatus(1);
@@ -69,6 +96,8 @@ export default function clock() {
             }
         }
     },);
+
+
 
     return (
         <>

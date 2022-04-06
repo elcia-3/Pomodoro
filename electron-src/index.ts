@@ -12,8 +12,8 @@ app.on('ready', async () => {
   await prepareNext('./renderer')
 
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 1000,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -50,15 +50,15 @@ ipcMain.handle("dialogMsg", (_event,_data) => {
 
 
 
-ipcMain.handle("testdb", (_event,_data) => {
+ipcMain.handle("testdb", (_event) => {
   testDbFunction();
 })
 
-ipcMain.handle("dbupdate", (_event,_data) => {
+ipcMain.handle("dbupdate", (_event) => {
   dbupdate();
 })
 
-ipcMain.handle("getAllData", (_event,_data) => {
+ipcMain.handle("getAllData", (_event) => {
   getAllData();
 })
 
@@ -109,7 +109,7 @@ export const getAllData = () : POMODORODATA[] | boolean => {
 
 export const dbupdate = () => {
   const currentDate = new Date();
-  const today: string = ( String(currentDate.getFullYear()) + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) +  ("0" + String(currentDate.getDate()).slice(-2)));
+  const today: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate()).slice(-2)));
 
   if(db.tableExists('Test',savePath)) {
     db.getRows('Test',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {

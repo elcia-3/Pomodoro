@@ -4,17 +4,17 @@ const IndexPage = () => {
 
  const dialogAction = async () => {
     console.log("testdb");
-    await window.electron.testdb("テストだよ");
+    await window.electron.testdb();
   };
 
  const dbupdate = async () => {
     console.log("testdb");
-    await window.electron.dbupdate("テストだよ");
+    await window.electron.dbupdate();
   };
 
  const getAllData = async () => {
     console.log("testdb");
-    await window.electron.getAllData("テストだよ");
+    await window.electron.getAllData();
   };
 
 
