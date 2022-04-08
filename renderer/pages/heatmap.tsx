@@ -18,16 +18,22 @@ const value = [
 
 const Demo = () => {
 
+var ggg:any ;
+
  const getAllData = async () => {
     console.log("testdb");
     await window.electron.getAllData();
+    ggg = window.electron.getAllData();
+
   };
 
   const data = getAllData();
 
+
   return (
 
     <>
+    {ggg[0].count}
 
 <Heatmap
   beginDate={new Date('2022-01-01')} // optional

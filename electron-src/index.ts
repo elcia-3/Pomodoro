@@ -73,8 +73,8 @@ interface POMODORODATA{
 }
 
 export const testDbFunction = () => {
-    if(!db.tableExists('Test',savePath)) {
-        db.createTable('Test',savePath,(success:boolean,msg:string) => {
+    if(!db.tableExists('datas',savePath)) {
+        db.createTable('datas',savePath,(success:boolean,msg:string) => {
             if(success) {
                 console.log(msg);
             } else {
@@ -82,15 +82,15 @@ export const testDbFunction = () => {
             }
         });
     } else {
-        console.log("already create Test table");
+        console.log("already create datas table");
     }
 };
 
 export const getAllData = () : POMODORODATA[] | boolean => {
     let result : POMODORODATA[] | boolean = false;
-  if(db.tableExists('Test',savePath)) {
+  if(db.tableExists('datas',savePath)) {
         //テーブルが存在するならgetAll
-        db.getAll( 'Test', savePath ,(success:boolean,contents:POMODORODATA[]) => {
+        db.getAll( 'datas', savePath ,(success:boolean,contents:POMODORODATA[]) => {
             if(success) {
                 console.log("getAll success");
                 console.log(contents);
@@ -111,24 +111,24 @@ export const dbupdate = () => {
   const currentDate = new Date();
   const today: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate()).slice(-2)));
 
-  if(db.tableExists('Test',savePath)) {
-    db.getRows('Test',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {
+  if(db.tableExists('datas',savePath)) {
+    db.getRows('datas',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {
       if(success) {
         console.log("getRows success");
         console.log(contents);
         if(contents.length > 0) {
           let newCount: number = contents[0].count;
           newCount++;
-          db.updateRow('Test', savePath, {"date":today}, {"count": newCount },  (successupdaterow:boolean,message:string) => {
+          db.updateRow('datas', savePath, {"date":today}, {"count": newCount },  (successupdaterow:boolean,message:string) => {
             if(successupdaterow) {
-              console.log("updateTestData.updateRow success."+message);
+              console.log("updatedatasData.updateRow success."+message);
             } else {
-                console.log("updateTestData.updateRow failed."+message);
+                console.log("updatedatasData.updateRow failed."+message);
             }
           });
         } else {
         let todaysFirstPomodoro : POMODORODATA= {count:1,date:today};
-        db.insertTableContent('Test',savePath,todaysFirstPomodoro,(success:boolean,message:string) => {
+        db.insertTableContent('datas',savePath,todaysFirstPomodoro,(success:boolean,message:string) => {
           if(success) {
               console.log("insertTableContent success : "+message);
           } else {

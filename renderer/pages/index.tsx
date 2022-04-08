@@ -22,6 +22,18 @@ export default function test() {
       <a>heatmaptest</a>
      </Link>
      </div>
+     <div>
+     <Link href="/getjson">
+      <a>getjson</a>
+     </Link>
+      <div>
+     <Link href="/gettest">
+      <a>gettest</a>
+     </Link>
+     </div>
+
+    </div>
+
 
 
 
