@@ -111,7 +111,7 @@ export const getAllData = () : POMODORODATA[] | boolean => {
 
 export const dbupdate = () => {
   const currentDate = new Date();
-  const today: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate()).slice(-2)));
+  const today: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
 
   if(db.tableExists('datas',savePath)) {
     db.getRows('datas',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {

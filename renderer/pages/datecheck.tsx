@@ -117,7 +117,7 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
                     dbupdate();
 
                     const currentDate = new Date();
-                    const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate()).slice(-2)));
+                    const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
                     if(cliantJson.datas[cliantJson.datas.length - 1] == null){
                         cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
                     }else{
