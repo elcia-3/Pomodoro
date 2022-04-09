@@ -1,7 +1,7 @@
 import css from '../styles/clock.module.css'
 import React,{ useState, useEffect } from 'react';
-
-export default function clock() {
+import { GetStaticProps } from 'next'
+export default function clock(){
     //time variable
     let [count, setCount] = useState(0);
     let minute: string = `0${Math.floor(count / 60)}`.slice(-2);
@@ -100,6 +100,7 @@ export default function clock() {
 
 
     return (
+ 
         <>
             <button onClick={() => { setTime(workTime);  setStatus(1); }} >スタート</button>
             <div className={css.time}>

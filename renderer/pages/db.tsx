@@ -17,10 +17,6 @@ const IndexPage = () => {
     await window.electron.getAllData();
   };
 
-
-
-
-
   return (
       <>
         <h1>登録ページ</h1>
@@ -37,9 +33,6 @@ const IndexPage = () => {
       <button id="test1" type="button" onClick={dbupdate}>
         dbupdate
       </button>
-
-
-
 
       </>
   )

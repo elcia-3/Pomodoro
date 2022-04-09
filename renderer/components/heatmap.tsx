@@ -7,6 +7,7 @@ import Legend from './Legend';
 type data = {
   date:String
   count:number
+  id?:number
 }
 
 type Props = {
@@ -33,7 +34,7 @@ export default function Heatmap (props: Props){
       let key = cursor.format(DATE_FORMAT)
       let entry = data.find((element) => element.date == key)
       calendar.set(cursor, {
-        title: `${key}: ${(entry && entry.count) || 0}`,
+        title: `${key} : ${(entry && entry.count) || 0}`,
         count: `${(entry && entry.count) || 0}`
       })
     }

@@ -21,6 +21,8 @@ app.on('ready', async () => {
     },
   })
 
+  testDbFunction();
+
   const url = isDev
     ? 'http://localhost:8000/'
     : format({

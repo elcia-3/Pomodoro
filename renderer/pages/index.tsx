@@ -26,13 +26,27 @@ export default function test() {
      <Link href="/getjson">
       <a>getjson</a>
      </Link>
+     </div>
       <div>
      <Link href="/gettest">
       <a>gettest</a>
      </Link>
      </div>
 
-    </div>
+
+     <div>
+     <Link href="/output">
+      <a>output</a>
+     </Link>
+     </div>
+
+     <div>
+     <Link href="/dots">
+      <a>dots</a>
+     </Link>
+     </div>
+
+
 
 
 
