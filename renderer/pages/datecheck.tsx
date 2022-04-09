@@ -1,5 +1,3 @@
-
-import css from '../styles/clock.module.css'
 import React,{ useState, useEffect } from 'react';
 import * as fs from 'fs'
 import { GetStaticProps } from 'next'

@@ -68,7 +68,6 @@ export default function Heatmap (props: Props){
 
   return(
     <>
-
       <div className={ css.outline }>
         <table className={ css.table }>
           <tbody>

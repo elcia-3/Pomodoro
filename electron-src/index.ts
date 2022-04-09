@@ -11,15 +11,18 @@ import prepareNext from 'electron-next'
 app.on('ready', async () => {
   await prepareNext('./renderer')
 
+
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 1000,
+    width: 1000,
+    height: 1200,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: join(__dirname, 'preload.js'),
     },
   })
+
+  mainWindow.setAspectRatio(0.8);
 
   testDbFunction();
 
@@ -30,10 +33,6 @@ app.on('ready', async () => {
       protocol: 'file:',
       slashes: true,
     });
-  if (isDev) {
-    // 開発者ツール
-    mainWindow.webContents.openDevTools();
-  }
   //delete menu bar
   mainWindow.setMenu(null);
 

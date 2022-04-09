@@ -18,6 +18,7 @@
     "electron-db": "elcia-3/electron-db",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
+    "moment": "^2.29.2",
     "next-remove-imports": "^1.0.6",
     "node-fetch": "^2.6.7",
     "react": "^17.0.2",
