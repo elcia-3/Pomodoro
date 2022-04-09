@@ -1,3 +1,4 @@
+
 import css from '../styles/clock.module.css'
 import React,{ useState, useEffect } from 'react';
 import * as fs from 'fs'
@@ -30,10 +31,18 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
     let minute: string = `0${Math.floor(count / 60)}`.slice(-2);
     let second: string = `0${count % 60}`.slice(-2);
     const workTime: number = 10;
-    const breakTime: number = 300;
+    const breakTime: number = 5;
     
     //status = 0 initialStatus; status = 1 workTime; status = 2 breakTime
     let [status, setStatus] = useState(0);
+
+
+    const BeginDate = new Date();
+    BeginDate.setMonth(BeginDate.getMonth() - 11);
+    BeginDate.setDate(1);
+    let [cliantJson, setCliantJson] = useState(json);
+    let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState(cliantJson.datas[cliantJson.datas.length -1] == null ? "0" : ("0" +  String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2) );
+
 
 
 
@@ -106,7 +115,21 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
                     finishNotification();
                     finishmp3();
                     dbupdate();
-                    cliantJson.datas[0].count++;
+
+                    const currentDate = new Date();
+                    const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate()).slice(-2)));
+                    if(cliantJson.datas[cliantJson.datas.length - 1] == null){
+                        cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+                    }else{
+                        if (dateChange == cliantJson.datas[cliantJson.datas.length -1].date){
+                            cliantJson.datas[cliantJson.datas.length -1].count++;
+                        }else{
+                            cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+                        }
+                    }
+
+                    setTodaysPomodoroCount(("0" + String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2));
+
                     
                 } else if (status === 2) {
                     setTime(workTime)
@@ -118,19 +141,10 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
         }
     },);
 
-    const BeginDate = new Date();
-    BeginDate.setMonth(BeginDate.getMonth() - 11);
-    BeginDate.setDate(1);
-    const EndDate = new Date();
-    let [cliantJson, setCliantJson] = useState(json);
-
 
     const work_color: string = "#ff4d2d";
     const rest_color: string = "#11ad11";
-
     let gauge = Math.floor( count / (status === 1 ? workTime/25 : breakTime/25));
-
-
 
     const dots = () => {
         const range = (start: number, end: number) => [...Array((end - start) + 1)].map((_, i) => start + i);
@@ -176,7 +190,6 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
     const information_area = () => {
         let work_icon_color: string = status === 1 ? work_color : "#c0c0c0";
         let rest_icon_color: string = status === 2 ? rest_color : "#c0c0c0";
-        const TodaysPomodoroCount = cliantJson.datas[cliantJson.datas.length] == null ? 0 : ("0" +  String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2);
 
         return (
             <div className="information-area">
@@ -200,7 +213,6 @@ const GamesPage: React.FC<Json> = ({ json }: Json) => {
         <>
             <Heatmap
             beginDate={(BeginDate)} // optional
-            endDate={EndDate}   // optional
             data={cliantJson.datas}
             />
  

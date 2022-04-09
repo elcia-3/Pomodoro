@@ -12,7 +12,7 @@ type data = {
 
 type Props = {
     beginDate:any
-    endDate:any
+    endDate?:any
     data:data[]
 }
 

@@ -46,6 +46,13 @@ export default function test() {
      </Link>
      </div>
 
+     <div>
+     <Link href="/datecheck">
+      <a>datechack</a>
+     </Link>
+     </div>
+
+
 
 
 
