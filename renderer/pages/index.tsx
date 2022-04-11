@@ -4,6 +4,7 @@ import { GetStaticProps } from 'next'
 import * as path from 'path'
 import Heatmap from '../components/heatmap'
 import { work_icon, rest_icon } from '../components/icon'
+import css from '../styles/index.module.css'
 
 type Json = {json: Datas}
 type Datas = {datas:Data[]}
@@ -40,7 +41,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
     BeginDate.setDate(1);
     let [cliantJson, setCliantJson] = useState(json);
     let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState(cliantJson.datas[cliantJson.datas.length -1] == null ? "0" : ("0" +  String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2) );
-
 
 
 
@@ -209,16 +209,21 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
     return (
         <>
-           <div className="square">
-              {dots()}
-              {information_area()}
-            </div>
+          <div className={css.content}>
+
+           <div className={css.calndar}>
+            <div className="square">
+                {dots()}
+                {information_area()}
+              </div>
+           </div>
             <button onClick={() => { setTime(workTime);  setStatus(1); }} >スタート</button>
             <Heatmap
             beginDate={(BeginDate)} // optional
             data={cliantJson.datas}
             />
 
+          </div>
 
  
        </>

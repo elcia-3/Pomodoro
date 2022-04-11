@@ -1,6 +1,8 @@
 // Native
 import { join } from 'path'
 import { format } from 'url'
+const electron = require('electron')
+
 
 // Packages
 import { BrowserWindow, app, ipcMain, Notification } from 'electron'
@@ -12,17 +14,82 @@ app.on('ready', async () => {
   await prepareNext('./renderer')
 
 
-  const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 1200,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: join(__dirname, 'preload.js'),
-    },
-  })
 
-  mainWindow.setAspectRatio(0.8);
+  var fs = require('fs');
+  var info_path = path.join(app.getPath("userData"), "bounds-info.json");
+  var bounds_info : any;
+  try {
+      bounds_info = JSON.parse(fs.readFileSync(info_path, 'utf8'));
+  }
+  catch(e) {
+      bounds_info = {width: 740, height: 907}; 
+  }
+
+
+  const mainWindow = new BrowserWindow(setSize())
+  mainWindow.on('resize', WindowResize);
+mainWindow.on('close', function() {
+    fs.writeFileSync(info_path, JSON.stringify(mainWindow.getBounds()));
+    console.log(bounds_info)
+});
+
+
+
+  let currentWindowSize = mainWindow.getSize();
+  let NextWindowSize =  mainWindow.getSize();
+
+  const Screen = electron.screen
+
+  function WindowResize() {
+    NextWindowSize =  mainWindow.getSize();
+
+
+  const currentDisplay = Screen.getDisplayNearestPoint(Screen.getCursorScreenPoint());
+  const size = currentDisplay.size;
+
+
+    console.log(size.width);
+    console.log(size.height);
+
+
+
+    if(NextWindowSize[1] < size.height - 100 ){
+      if((currentWindowSize[0] < NextWindowSize[0]) || (currentWindowSize[0] > NextWindowSize[0])){
+          mainWindow.setSize(NextWindowSize[0],NextWindowSize[0] + 210 ) ;
+      }else{
+          mainWindow.setSize(NextWindowSize[1] - 210 ,NextWindowSize[1]) ;
+      }
+    }
+
+
+   currentWindowSize = mainWindow.getSize();
+
+  }
+
+  function setSize(){
+
+      return{
+        x: bounds_info.x,
+        y: bounds_info.y,
+        width: bounds_info.width,
+        height: bounds_info.height,
+        minWidth:740,
+        minHeight:907,
+        title: "Pomodoro",
+        useContentSize: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+          preload: join(__dirname, 'preload.js'),
+        },
+      }
+  
+    
+  }
+
+
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
+
 
   testDbFunction();
 
