@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { GetStaticProps } from 'next'
 import * as path from 'path'
 import Heatmap from '../components/heatmap'
-import { work_icon, rest_icon } from '../components/icon'
+import { work_icon, rest_icon, stop_icon } from '../components/icon'
 import css from '../styles/index.module.css'
 
 type Json = {json: Datas}
@@ -34,6 +34,7 @@ const Element: React.FC<Json> = ({ json }: Json) => {
     
     //status = 0 initialStatus; status = 1 workTime; status = 2 breakTime
     let [status, setStatus] = useState(0);
+    let [stopCount, setStopCount] = useState(null);
 
 
     const BeginDate = new Date();
@@ -46,14 +47,17 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
     //notification
     const startNotification = async () => {
-        console.log("start");
         await window.electron.dialogMsg("Work Time");
     };
 
     const finishNotification = async () => {
-        console.log("start");
         await window.electron.dialogMsg("Break Time");
     };
+
+    const stopCountNotification = async () => {
+        await window.electron.dialogMsg("Stop Pomodoro");
+    };
+
 
 
 
@@ -75,16 +79,26 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
 
     //DataBase
-    const dialogAction = async () => {
-        console.log("dialogAction");
-        await window.electron.testdb();
-    };
-
     const dbupdate = async () => {
         console.log("dbupdate");
         await window.electron.dbupdate();
     };
 
+    function addPomodoroCount(){
+        dbupdate();
+        const currentDate = new Date();
+        const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
+        if(cliantJson.datas[cliantJson.datas.length - 1] == null){
+            cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+        }else{
+            if (dateChange == cliantJson.datas[cliantJson.datas.length -1].date){
+                cliantJson.datas[cliantJson.datas.length -1].count++;
+            }else{
+                cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+            }
+        }
+        setTodaysPomodoroCount(("0" + String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2));
+    }
  
 
 
@@ -99,7 +113,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
 
 
-
     useEffect(() => {
         if(status !== 0){
             if (count >= 0 && (status === 1 || status === 2 )) {
@@ -107,41 +120,62 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 return () => clearInterval(timerId);
             }
             if (count <= 0) {
-                if (status === 1) {
-                    setTime(breakTime)
-                    setStatus(2);
-                    finishNotification();
-                    finishmp3();
-                    dbupdate();
-
-                    const currentDate = new Date();
-                    const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
-                    if(cliantJson.datas[cliantJson.datas.length - 1] == null){
-                        cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
-                    }else{
-                        if (dateChange == cliantJson.datas[cliantJson.datas.length -1].date){
-                            cliantJson.datas[cliantJson.datas.length -1].count++;
-                        }else{
-                            cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
-                        }
-                    }
-
-                    setTodaysPomodoroCount(("0" + String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2));
-
-                    
-                } else if (status === 2) {
+                if(stopCount == true){
                     setTime(workTime)
-                    setStatus(1);
-                    startNotification();
-                    startmp3();
+                    setStatus(0);
+                    setStopCount(null);
+                    stopCountNotification();
+                    finishmp3();
+                    if (status === 1) {
+                        addPomodoroCount();
+                    }
+                }else{
+                    if (status === 1) {
+                        setTime(breakTime)
+                        setStatus(2);
+                        finishNotification();
+                        finishmp3();
+                        addPomodoroCount();
+                    } else if (status === 2) {
+                        setTime(workTime)
+                        setStatus(1);
+                        startNotification();
+                        startmp3();
+                    }
                 }
-            }
+           }
         }
     },);
 
 
+    function StatusManagement(){
+        switch(status){
+            case 0:
+                setTime(workTime);  
+                setStatus(1); 
+                break;
+            case 1:
+                if(stopCount == null){
+                    setStopCount(true);
+                }else{
+                    setStopCount(null);
+                }
+                break;
+            case 2:
+                if(stopCount == null){
+                    setStopCount(true);
+                }else{
+                    setStopCount(null);
+                }
+        
+        }
+    }
+
+
+
     const work_color: string = "#ff4d2d";
     const rest_color: string = "#11ad11";
+    const stop_color: string = "#214098";
     let gauge = Math.floor( count / (status === 1 ? workTime/25 : breakTime/25));
 
     const dots = () => {
@@ -188,6 +222,7 @@ const Element: React.FC<Json> = ({ json }: Json) => {
     const information_area = () => {
         let work_icon_color: string = status === 1 ? work_color : "#c0c0c0";
         let rest_icon_color: string = status === 2 ? rest_color : "#c0c0c0";
+        let stop_icon_color: string = stopCount === true ? stop_color : "#c0c0c0";
 
         return (
             <div className="information-area">
@@ -199,6 +234,7 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 <div className="icon-box">
                     {work_icon({ fill: work_icon_color })}
                     {rest_icon({ fill: rest_icon_color })}
+                    {stop_icon({ fill: stop_icon_color })}
                 </div>
             </div>
         );
@@ -211,13 +247,12 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         <>
           <div className={css.content}>
 
-           <div className={css.calndar}>
+           <div className={css.calndar} onClick={() => { StatusManagement(); }}>
             <div className="square">
                 {dots()}
                 {information_area()}
               </div>
            </div>
-            <button onClick={() => { setTime(workTime);  setStatus(1); }} >スタート</button>
             <Heatmap
             beginDate={(BeginDate)} // optional
             data={cliantJson.datas}
