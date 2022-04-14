@@ -6,6 +6,13 @@ import Heatmap from '../components/heatmap'
 import { work_icon, rest_icon, stop_icon } from '../components/icon'
 import css from '../styles/index.module.css'
 
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Slider from '@mui/material/Slider';
+import VolumeDown from '@mui/icons-material/VolumeDown';
+import VolumeUp from '@mui/icons-material/VolumeUp';
+
+
 type Json = {json: Datas}
 type Datas = {datas:Data[]}
 type Data = { count: number, date: string, id:number }
@@ -62,17 +69,24 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
 
     //audio
+    const [volume, setVolume] = React.useState(30);
+
+    const handleChange = (event, newValue) => {
+        setVolume(newValue);
+    };
+
+
     function startmp3(){
         let startAudio = new Audio()
         startAudio.src = "/music/bell.mp3" 
-        startAudio.volume = 0.5
+        startAudio.volume = volume/100;
         startAudio.play()
     }
 
     function finishmp3(){
         let finishAudio = new Audio()
         finishAudio.src = "/music/gong.mp3" 
-        finishAudio.volume = 0.5
+        finishAudio.volume = volume/100
         finishAudio.play()
     }
 
@@ -155,19 +169,9 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 setStatus(1); 
                 break;
             case 1:
-                if(stopCount == null){
-                    setStopCount(true);
-                }else{
-                    setStopCount(null);
-                }
-                break;
             case 2:
-                if(stopCount == null){
-                    setStopCount(true);
-                }else{
-                    setStopCount(null);
-                }
-        
+                stopCount === null ? setStopCount(true) : setStopCount(null);
+                break;
         }
     }
 
@@ -253,14 +257,18 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 {information_area()}
               </div>
            </div>
+            <Box sx={{ width: 200 }}>
+            <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                <VolumeDown />
+                <Slider aria-label="Volume" value={volume} onChange={handleChange} />
+                <VolumeUp />
+            </Stack>
+            </Box>
             <Heatmap
             beginDate={(BeginDate)} // optional
             data={cliantJson.datas}
             />
-
           </div>
-
- 
        </>
     )
 }

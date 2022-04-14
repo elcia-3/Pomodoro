@@ -59,7 +59,11 @@ export default function Heatmap (props: Props){
   function renderCell(cell, i, j) {
     const {title} = (cell || {});
     const {count} = (cell || {});
-    const style = "level" + String(count);
+    let style = "level" + String(count);
+    if(count >= 12){
+      style = "level12";
+    }
+
     return <td key={ `cell${i}-${j}` } title={ title } className={css[style]}> <div className={css.balloon}>{count} </div></td>
   }
 

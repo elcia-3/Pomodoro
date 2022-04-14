@@ -13,8 +13,10 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "@uiw/react-heat-map": "^2.0.3",
-    "@uiw/react-tooltip": "^4.18.1",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.6.1",
+    "@mui/material": "^5.6.1",
     "electron-db": "elcia-3/electron-db",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
@@ -27,10 +29,10 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.6",
-    "@types/react": "^16.9.9",
-    "@types/react-dom": "^16.9.9",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.2",
     "electron": "^13",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "^22.5.1",
     "file-loader": "^6.2.0",
     "next": "latest",
     "rimraf": "^3.0.0",
