@@ -1,7 +1,10 @@
 {
+  "author": "elcia",
+  "name": "pomodoro",
+  "version": "0.0.1",
   "private": true,
   "main": "main/index.js",
-  "productName": "ElectronTypescriptNext",
+  "productName": "Pomodoro",
   "scripts": {
     "clean": "rimraf dist main renderer/out renderer/.next",
     "dev": "npm run build-electron && electron .",
@@ -20,6 +23,7 @@
     "electron-db": "elcia-3/electron-db",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
+    "fs": "^0.0.1-security",
     "moment": "^2.29.2",
     "next-remove-imports": "^1.0.6",
     "node-fetch": "^2.6.7",
