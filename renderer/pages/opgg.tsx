@@ -1,8 +1,8 @@
+
 import React,{ useState, useEffect } from 'react';
 import * as fs from 'fs'
 import { GetStaticProps } from 'next'
 import * as path from 'path'
-import Heatmap from '../components/heatmap'
 import { work_icon, rest_icon, stop_icon } from '../components/icon'
 import css from '../styles/index.module.css'
 
@@ -12,27 +12,52 @@ import Slider from '@mui/material/Slider';
 import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
 
+import dynamic from "next/dynamic";
 import Link from 'next/link'
+const Heatmap = dynamic(() => import("../components/heatmap"), { ssr: false });
 
 type Json = {json: Datas}
-type Datas = {datas:Data[]}
+type Datas = {count: number, date: string, id:number}[]
 type Data = { count: number, date: string, id:number }
 
 
-export const getStaticProps: GetStaticProps<Json> = async (context) => {
-  // JSON ファイルを読み込む
-  const jsonPath = path.join(process.cwd(), 'database',  'datas.json')
-  const jsonText = fs.readFileSync(jsonPath, 'utf-8')
-  const json = JSON.parse(jsonText) as Datas
-
-  // ページコンポーネントに渡す props オブジェクトを設定する
-  return {
-    props: { json}
-  }
-}
 
 
-const Element: React.FC<Json> = ({ json }: Json) => {
+const Element: React.FC<Json> = () => {
+
+    let kana = [{count:1, date:"2022-02-03", id: 1233},
+               ];
+    const BeginDate = new Date();
+    let [cliantJson, setCliantJson] = useState(null);
+    BeginDate.setMonth(BeginDate.getMonth() - 11);
+    BeginDate.setDate(1);
+
+     useEffect(() => {
+        window.electron.getAllData().then(result => setCliantJson(result))  
+    }, []);
+
+
+
+    function jsonNullCheck(){
+       if(cliantJson == null){
+           return;
+       }else
+       {
+           return(
+                <Heatmap
+                beginDate={(BeginDate)} // optional
+                data={cliantJson}
+                />
+           )
+       }
+
+
+    }
+
+      //  let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState(cliantJson[cliantJson.length -1] == null ? "0" : ("0" +  String(cliantJson[cliantJson.length -1].count)).slice(-2) );
+
+
+
     //time variable
     let [count, setCount] = useState(1500);
     let minute: string = `0${Math.floor(count / 60)}`.slice(-2);
@@ -44,12 +69,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
     let [status, setStatus] = useState(0);
     let [stopCount, setStopCount] = useState(null);
 
-
-    const BeginDate = new Date();
-    BeginDate.setMonth(BeginDate.getMonth() - 11);
-    BeginDate.setDate(1);
-    let [cliantJson, setCliantJson] = useState(json);
-    let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState(cliantJson.datas[cliantJson.datas.length -1] == null ? "0" : ("0" +  String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2) );
 
 
 
@@ -108,17 +127,18 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         dbupdate();
         const currentDate = new Date();
         const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
-        if(cliantJson.datas[cliantJson.datas.length - 1] == null){
-            cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+        if(cliantJson[cliantJson.length - 1] == null){
+            cliantJson.push( {date: dateChange, count: 1 , id: 1234567})
         }else{
-            if (dateChange == cliantJson.datas[cliantJson.datas.length -1].date){
-                cliantJson.datas[cliantJson.datas.length -1].count++;
+            if (dateChange == cliantJson[cliantJson.length -1].date){
+                cliantJson[cliantJson.length -1].count++;
             }else{
-                cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+                cliantJson.push( {date: dateChange, count: 1 , id: 1234567})
             }
         }
-        setTodaysPomodoroCount(("0" + String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2));
+        //setTodaysPomodoroCount(("0" + String(cliantJson[cliantJson.length -1].count)).slice(-2));
     }
+ 
  
 
 
@@ -236,7 +256,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
         return (
             <div className="information-area">
-                <p className="laps-text">Pomo.{TodaysPomodoroCount}</p>
                 <p className="remain-text">
                     {minute}:{second}
                 </p>
@@ -253,16 +272,23 @@ const Element: React.FC<Json> = ({ json }: Json) => {
 
   const jsonPath = path.join(process.cwd(), 'database',  'datas.json')
 
-    let kana;
     
     function yes(){
         window.electron.getAllData().then(result => kana = result)  
     }
 
     function oh(){
-
-        console.log(kana[1])
+        console.log(kana)
     }
+
+    function wow(){
+        window.electron.getAllData().then(result => setCliantJson(result))  
+        setCliantJson(kana);
+        console.log(cliantJson)
+
+    }
+
+
 
     return (
         <>
@@ -281,22 +307,27 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 <VolumeUp />
             </Stack>
             </Box>
-            <Heatmap
-            beginDate={(BeginDate)} // optional
-            data={cliantJson.datas}
-            />
-          </div>
+
+        {jsonNullCheck()}
+
+         </div>
+
           {jsonPath}
       <button id="test1" type="button" onClick={yes}>
-        getAllData
+          yes
       </button>
       <button id="test1" type="button" onClick={oh}>
-        getAllData
+        oh
       </button>
+      <button id="test1" type="button" onClick={wow}>
+        wow
+      </button>
+
 
         <Link href="/opgg">
           <a>Home</a>
         </Link>
+
 
 
        </>

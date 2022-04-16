@@ -127,7 +127,7 @@ ipcMain.handle("dbupdate", (_event) => {
 })
 
 ipcMain.handle("getAllData", (_event) => {
-  getAllData();
+  return getAllData();
 })
 
 
