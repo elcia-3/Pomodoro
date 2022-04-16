@@ -1,14 +1,9 @@
-# Electron with Typescript application example
+# Pomodoro Timer 
 
-This example show how you can use Next.js inside an Electron application to avoid a lot of configuration, use Next.js router as view and use server-render to speed up the initial render of the application. Both Next.js and Electron layers are written in TypeScript and compiled to JavaScript during the build process.
+<div align = "center">
+  <img src = "https://user-images.githubusercontent.com/95375683/163692318-4d6ddb69-459a-42db-ba4a-2175165dbd71.png"></img>
+</div>
 
-| Part       | Source code (Typescript) | Builds (JavaScript) |
-| ---------- | ------------------------ | ------------------- |
-| Next.js    | `/renderer`              | `/renderer`         |
-| Electron   | `/electron-src`          | `/main`             |
-| Production |                          | `/dist`             |
-
-For development it's going to run a HTTP server and let Next.js handle routing. In production it use `next export` to pre-generate HTML static files and use them in your app instead of running an HTTP server.
 
 ## How to use
 
