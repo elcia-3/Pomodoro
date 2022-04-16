@@ -1,7 +1,7 @@
 # Pomodoro Timer 
 
 <div align = "center">
-  <img src = "https://user-images.githubusercontent.com/95375683/163692318-4d6ddb69-459a-42db-ba4a-2175165dbd71.png"></img>
+  <img src = "https://raw.githubusercontent.com/elcia-3/README-Materials/main/Pomodoro-offline/Pomodoro.png"></img>
 </div>
 
 
