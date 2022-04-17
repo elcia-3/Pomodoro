@@ -1,10 +1,7 @@
 import React,{ useState, useEffect } from 'react';
-import * as fs from 'fs'
-import { GetStaticProps } from 'next'
-import * as path from 'path'
-import Heatmap from '../components/heatmap'
 import { work_icon, rest_icon, stop_icon } from '../components/icon'
 import css from '../styles/index.module.css'
+import Heatmap from '../components/heatmap'
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -12,44 +9,50 @@ import Slider from '@mui/material/Slider';
 import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
 
-import Link from 'next/link'
 
-type Json = {json: Datas}
-type Datas = {datas:Data[]}
-type Data = { count: number, date: string, id:number }
+type Datas = {count: number, date: string, id:number}[]
+
+const Element: React.FC<Datas> = () => {
+    const BeginDate = new Date();
+    let [cliantJson, setCliantJson] = useState<Datas>(null);
+    BeginDate.setMonth(BeginDate.getMonth() - 11);
+    BeginDate.setDate(1);
+    let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState("00");
+     useEffect(() => {
+        window.electron.getAllData().then(result =>{
+            setCliantJson(result);
+            if( result[result.length - 1] !== undefined){
+                setTodaysPomodoroCount(result[result.length - 1].count === undefined ? "0" : ("0" +  String(result[result.length - 1].count)).slice(-2) );
+            }
+        }) 
+    }, []);
 
 
-export const getStaticProps: GetStaticProps<Json> = async (context) => {
-  // JSON ファイルを読み込む
-  const jsonPath = path.join(process.cwd(), 'database',  'datas.json')
-  const jsonText = fs.readFileSync(jsonPath, 'utf-8')
-  const json = JSON.parse(jsonText) as Datas
+    function jsonNullCheck(){
+       if(cliantJson == null){
+           return;
+       }else
+       {
+            return(
+                <Heatmap
+                beginDate={(BeginDate)} // optional
+                data={cliantJson}
+                />
+           )
+       }
+    }
 
-  // ページコンポーネントに渡す props オブジェクトを設定する
-  return {
-    props: { json}
-  }
-}
 
-
-const Element: React.FC<Json> = ({ json }: Json) => {
     //time variable
     let [count, setCount] = useState(1500);
     let minute: string = `0${Math.floor(count / 60)}`.slice(-2);
     let second: string = `0${count % 60}`.slice(-2);
-    const workTime: number = 10;
-    const breakTime: number = 5;
+    const workTime: number = 1500;
+    const breakTime: number = 300;
     
     //status = 0 initialStatus; status = 1 workTime; status = 2 breakTime
     let [status, setStatus] = useState(0);
     let [stopCount, setStopCount] = useState(null);
-
-
-    const BeginDate = new Date();
-    BeginDate.setMonth(BeginDate.getMonth() - 11);
-    BeginDate.setDate(1);
-    let [cliantJson, setCliantJson] = useState(json);
-    let [TodaysPomodoroCount, setTodaysPomodoroCount] = useState(cliantJson.datas[cliantJson.datas.length -1] == null ? "0" : ("0" +  String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2) );
 
 
 
@@ -66,36 +69,34 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         await window.electron.dialogMsg("Stop Pomodoro");
     };
 
- const getAllData = async () => {
-    console.log("testdb");
-    await window.electron.getAllData();
-  };
-
-
-
 
     //audio
-    const [volume, setVolume] = React.useState(30);
-
+    const [volume, setVolume] = React.useState(50);
     const handleChange = (event, newValue) => {
         setVolume(newValue);
     };
 
-
     function startmp3(){
         let startAudio = new Audio()
-        startAudio.src = "/music/bell.mp3" 
+        startAudio.src = "./music/bell.mp3" 
         startAudio.volume = volume/100;
         startAudio.play()
     }
 
     function finishmp3(){
         let finishAudio = new Audio()
-        finishAudio.src = "/music/gong.mp3" 
+        finishAudio.src = "./music/gong.mp3" 
         finishAudio.volume = volume/100
         finishAudio.play()
     }
 
+    function stopmp3(){
+        let stopAudio = new Audio()
+        stopAudio.src = "./music/jingle.mp3" 
+        stopAudio.volume = volume/100
+        stopAudio.play()
+    }
+ 
 
 
     //DataBase
@@ -108,17 +109,18 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         dbupdate();
         const currentDate = new Date();
         const dateChange: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
-        if(cliantJson.datas[cliantJson.datas.length - 1] == null){
-            cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+        if(cliantJson[cliantJson.length - 1] == null){
+            cliantJson.push( {date: dateChange, count: 1 , id: 1234567})
         }else{
-            if (dateChange == cliantJson.datas[cliantJson.datas.length -1].date){
-                cliantJson.datas[cliantJson.datas.length -1].count++;
+            if (dateChange == cliantJson[cliantJson.length -1].date){
+                cliantJson[cliantJson.length -1].count++;
             }else{
-                cliantJson.datas.push( {date: dateChange, count: 1 , id: 1234567})
+                cliantJson.push( {date: dateChange, count: 1 , id: 1234567})
             }
         }
-        setTodaysPomodoroCount(("0" + String(cliantJson.datas[cliantJson.datas.length -1].count)).slice(-2));
+        setTodaysPomodoroCount(("0" + String(cliantJson[cliantJson.length -1].count)).slice(-2));
     }
+ 
  
 
 
@@ -145,7 +147,7 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                     setStatus(0);
                     setStopCount(null);
                     stopCountNotification();
-                    finishmp3();
+                    stopmp3();
                     if (status === 1) {
                         addPomodoroCount();
                     }
@@ -181,8 +183,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         }
     }
 
-
-
     const work_color: string = "#ff4d2d";
     const rest_color: string = "#11ad11";
     const stop_color: string = "#214098";
@@ -192,7 +192,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
         const range = (start: number, end: number) => [...Array((end - start) + 1)].map((_, i) => start + i);
        return (
             <>
-
                 {
                     range(0, 24).map((num) => {
                         let angle = Math.PI / 12.5;
@@ -249,21 +248,6 @@ const Element: React.FC<Json> = ({ json }: Json) => {
             </div>
         );
     }
-
-
-  const jsonPath = path.join(process.cwd(), 'database',  'datas.json')
-
-    let kana;
-    
-    function yes(){
-        window.electron.getAllData().then(result => kana = result)  
-    }
-
-    function oh(){
-
-        console.log(kana[1])
-    }
-
     return (
         <>
           <div className={css.content}>
@@ -281,24 +265,8 @@ const Element: React.FC<Json> = ({ json }: Json) => {
                 <VolumeUp />
             </Stack>
             </Box>
-            <Heatmap
-            beginDate={(BeginDate)} // optional
-            data={cliantJson.datas}
-            />
-          </div>
-          {jsonPath}
-      <button id="test1" type="button" onClick={yes}>
-        getAllData
-      </button>
-      <button id="test1" type="button" onClick={oh}>
-        getAllData
-      </button>
-
-        <Link href="/opgg">
-          <a>Home</a>
-        </Link>
-
-
+            {jsonNullCheck()}
+         </div>
        </>
     )
 }

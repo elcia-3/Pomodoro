@@ -1,7 +1,8 @@
 {
   "author": "elcia",
   "name": "pomodoro",
-  "version": "0.0.1",
+  "description": "Pomodoro Timer",
+  "version": "1.0.0",
   "private": true,
   "main": "main/index.js",
   "productName": "Pomodoro",
@@ -44,6 +45,9 @@
   },
   "build": {
     "asar": true,
+    "win": {
+      "icon": "/images/icon.png"
+    },
     "files": [
       "main",
       "renderer/out"

@@ -3,7 +3,6 @@ import { join } from 'path'
 import { format } from 'url'
 const electron = require('electron')
 
-
 // Packages
 import { BrowserWindow, app, ipcMain, Notification } from 'electron'
 import isDev from 'electron-is-dev'
@@ -12,8 +11,6 @@ import prepareNext from 'electron-next'
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
   await prepareNext('./renderer')
-
-
 
   var fs = require('fs');
   var info_path = path.join(app.getPath("userData"), "bounds-info.json");
@@ -26,13 +23,12 @@ app.on('ready', async () => {
   }
 
 
-  const mainWindow = new BrowserWindow(setSize())
+  const mainWindow = new BrowserWindow(setWindow())
   mainWindow.on('resize', WindowResize);
-mainWindow.on('close', function() {
+  mainWindow.on('close', function() {
     fs.writeFileSync(info_path, JSON.stringify(mainWindow.getBounds()));
     console.log(bounds_info)
-});
-
+  });
 
 
   let currentWindowSize = mainWindow.getSize();
@@ -43,16 +39,10 @@ mainWindow.on('close', function() {
   function WindowResize() {
     NextWindowSize =  mainWindow.getSize();
 
-
-  const currentDisplay = Screen.getDisplayNearestPoint(Screen.getCursorScreenPoint());
-  const size = currentDisplay.size;
-
-
+    const currentDisplay = Screen.getDisplayNearestPoint(Screen.getCursorScreenPoint());
+    const size = currentDisplay.size;
     console.log(size.width);
     console.log(size.height);
-
-
-
     if(NextWindowSize[1] < size.height - 100 ){
       if((currentWindowSize[0] < NextWindowSize[0]) || (currentWindowSize[0] > NextWindowSize[0])){
           mainWindow.setSize(NextWindowSize[0],NextWindowSize[0] + 210 ) ;
@@ -60,36 +50,27 @@ mainWindow.on('close', function() {
           mainWindow.setSize(NextWindowSize[1] - 210 ,NextWindowSize[1]) ;
       }
     }
-
-
-   currentWindowSize = mainWindow.getSize();
-
+    currentWindowSize = mainWindow.getSize();
   }
 
-  function setSize(){
-
-      return{
-        x: bounds_info.x,
-        y: bounds_info.y,
-        width: bounds_info.width,
-        height: bounds_info.height,
-        minWidth:740,
-        minHeight:907,
-        title: "Pomodoro",
-        useContentSize: true,
-        webPreferences: {
-          nodeIntegration: false,
-          contextIsolation: true,
-          preload: join(__dirname, 'preload.js'),
-        },
-      }
-  
-    
+  function setWindow(){
+    return{
+      x: bounds_info.x,
+      y: bounds_info.y,
+      width: bounds_info.width,
+      height: bounds_info.height,
+      minWidth:740,
+      minHeight:907,
+      icon: 'images/icon.png',
+      title: "Pomodoro",
+      useContentSize: true,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: join(__dirname, 'preload.js'),
+      },
+    }
   }
-
-
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
-
 
   testDbFunction();
 
@@ -117,7 +98,6 @@ ipcMain.handle("dialogMsg", (_event,_data) => {
 })
 
 
-
 ipcMain.handle("testdb", (_event) => {
   testDbFunction();
 })
@@ -131,76 +111,75 @@ ipcMain.handle("getAllData", (_event) => {
 })
 
 
+
 const db = require('electron-db');
 const path = require('path');
-const savePath:any = path.join("./database/","");
+const savePath:any = path.join("./","");
 
 interface POMODORODATA{
-    date: string,
-    count:number,
+  date: string,
+  count:number,
 }
 
 export const testDbFunction = () => {
-    if(!db.tableExists('datas',savePath)) {
-        db.createTable('datas',savePath,(success:boolean,msg:string) => {
-            if(success) {
-                console.log(msg);
-            } else {
-                console.log("failed to createTable. "+msg);
-            }
-        });
-    } else {
-        console.log("already create datas table");
-    }
+  if(!db.tableExists('PomodoroHistory',savePath)) {
+    db.createTable('PomodoroHistory',savePath,(success:boolean,msg:string) => {
+      if(success) {
+        console.log(msg);
+      } else {
+        console.log("failed to createTable. "+msg);
+      }
+    });
+  } else {
+    console.log("already create PomodoroHistory table");
+  }
 };
 
 export const getAllData = () : POMODORODATA[] | boolean => {
-    let result : POMODORODATA[] | boolean = false;
-  if(db.tableExists('datas',savePath)) {
-        //テーブルが存在するならgetAll
-        db.getAll( 'datas', savePath ,(success:boolean,contents:POMODORODATA[]) => {
-            if(success) {
-                console.log("getAll success");
-                console.log(contents);
-                result = contents;
-            } else {
-                console.log("getAll failed");
-                result = false;
-            }
-        });
-    } else {
-        console.log("table is not exist");
+  let result : POMODORODATA[] | boolean = false;
+  if(db.tableExists('PomodoroHistory',savePath)) {
+    db.getAll( 'PomodoroHistory', savePath ,(success:boolean,contents:POMODORODATA[]) => {
+      if(success) {
+        console.log("getAll success");
+        console.log(contents);
+        result = contents;
+      } else {
+        console.log("getAll failed");
         result = false;
-    }
-    return result;
+      }
+    });
+  } else {
+    console.log("table is not exist");
+    result = false;
+  }
+  return result;
 }
 
 export const dbupdate = () => {
   const currentDate = new Date();
   const today: string = ( String(currentDate.getFullYear()) + "-" + ("0" + String(currentDate.getMonth() + 1 )).slice(-2) + "-" + ("0" + String(currentDate.getDate())).slice(-2));
-
-  if(db.tableExists('datas',savePath)) {
-    db.getRows('datas',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {
+  if(db.tableExists('PomodoroHistory',savePath)) {
+    db.getRows('PomodoroHistory',savePath ,{date: today},(success:boolean, contents:POMODORODATA[] ) => {
       if(success) {
         console.log("getRows success");
         console.log(contents);
         if(contents.length > 0) {
           let newCount: number = contents[0].count;
           newCount++;
-          db.updateRow('datas', savePath, {"date":today}, {"count": newCount },  (successupdaterow:boolean,message:string) => {
+          db.updateRow('PomodoroHistory', savePath, {"date":today}, {"count": newCount },  (successupdaterow:boolean,message:string) => {
             if(successupdaterow) {
-              console.log("updatedatasData.updateRow success."+message);
+              console.log("updatePomodoroHistoryData.updateRow success."+message);
             } else {
-                console.log("updatedatasData.updateRow failed."+message);
+              console.log("updatePomodoroHistoryData.updateRow failed."+message);
             }
           });
         } else {
         let todaysFirstPomodoro : POMODORODATA= {count:1,date:today};
-        db.insertTableContent('datas',savePath,todaysFirstPomodoro,(success:boolean,message:string) => {
+        db.insertTableContent('PomodoroHistory',savePath,todaysFirstPomodoro,(success:boolean,message:string) => {
           if(success) {
-              console.log("insertTableContent success : "+message);
+            console.log("insertTableContent success : "+message);
           } else {
-              console.log("insertTableContent failed : "+message);
+            console.log("insertTableContent failed : "+message);
           }
         });
         }
@@ -209,5 +188,4 @@ export const dbupdate = () => {
       }
     });
   }
-
 }
