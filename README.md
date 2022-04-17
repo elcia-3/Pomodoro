@@ -4,34 +4,13 @@
   <img src = "https://raw.githubusercontent.com/elcia-3/README-Materials/main/Pomodoro-offline/Pomodoro.png"></img>
 </div>
 
+## OverView
+This application is simple Pomodoro technique Timer.
 
-## How to use
+<!-- ##Demo -->
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-electron-typescript with-electron-typescript-app
-# or
-yarn create next-app --example with-electron-typescript with-electron-typescript-app
-```
-
-Available commands:
-
-```bash
-"build-renderer": build and transpile Next.js layer
-"build-electron": transpile electron layer
-"build": build both layers
-"dev": start dev version
-"dist": create production electron build
-"type-check": check TypeScript in project
-```
-
-## Notes
-
-You can create the production app using `npm run dist`.
-
-_note regarding types:_
-
-- Electron provides its own type definitions, so you don't need @types/electron installed!
-  source: https://www.npmjs.com/package/@types/electron
-- There were no types available for `electron-next` at the time of creating this example, so until they are available there is a file `electron-next.d.ts` in `electron-src` directory.
+## Feature
+- Desktop notifications
+- Notification by sound 
+- Track use history in offline
+- Memorize the window location. 
