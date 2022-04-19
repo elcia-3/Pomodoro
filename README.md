@@ -7,6 +7,8 @@
 ## OverView
 This application is simple Pomodoro technique Timer.
 
+<!-- ##Install -->
+
 <!-- ##Demo -->
 
 ## Feature
