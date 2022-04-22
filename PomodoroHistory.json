@@ -1,3 +1,16 @@
+
 {
-  "PomodoroHistory": []
+  "PomodoroHistory": [
+    {
+      "count": 3,
+      "date": "2022-04-21",
+      "id": 1650493803729
+    },
+    {
+      "count": 2,
+      "date": "2022-04-22",
+      "id": 1650493803729
+    }
+ 
+  ]
 }

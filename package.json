@@ -2,7 +2,7 @@
   "author": "elcia",
   "name": "pomodoro",
   "description": "Pomodoro Timer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "main": "main/index.js",
   "productName": "Pomodoro",
